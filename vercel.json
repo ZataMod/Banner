@@ -1,10 +1,15 @@
 {
-  "functions": {
-    "api/banner.py": {
-      "runtime": "python3.9"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/banner.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
-    { "src": "/api/banner", "dest": "/api/banner.py" }
+    {
+      "src": "/api/banner",
+      "dest": "api/banner.py"
+    }
   ]
 }

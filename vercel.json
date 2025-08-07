@@ -1,14 +1,10 @@
 {
-  "version": 2,
   "functions": {
     "api/banner.py": {
-      "runtime": "python3.11"
+      "runtime": "python3.9"
     }
   },
   "routes": [
-    {
-      "src": "/api/banner",
-      "dest": "/api/banner.py"
-    }
+    { "src": "/api/banner", "dest": "/api/banner.py" }
   ]
 }

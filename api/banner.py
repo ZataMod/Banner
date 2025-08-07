@@ -1,11 +1,11 @@
 from flask import Flask, request, send_file
 from PIL import Image, ImageDraw, ImageFont
-import urllib.request
 from io import BytesIO
+import requests
 
 app = Flask(__name__)
 
-def create_leave_group_banner(avatar_bytes, lines, font_path="SVN-VT Redzone Classic.otf"):
+def create_leave_group_banner(avatar_img, lines, font_path):
     banner_width = 1600
     banner_height = 500
     avatar_size = 300
@@ -14,7 +14,7 @@ def create_leave_group_banner(avatar_bytes, lines, font_path="SVN-VT Redzone Cla
     banner = Image.new("RGB", (banner_width, banner_height), "#0f172a")
     draw = ImageDraw.Draw(banner)
 
-    avatar = Image.open(BytesIO(avatar_bytes)).convert("RGBA")
+    avatar = avatar_img.convert("RGBA")
     avatar = avatar.resize((avatar_size, avatar_size))
 
     mask = Image.new("L", (avatar_size, avatar_size), 0)
@@ -50,20 +50,23 @@ def create_leave_group_banner(avatar_bytes, lines, font_path="SVN-VT Redzone Cla
         draw.text((text_x, text_y), line, font=font, fill=(255, 255, 255))
 
     output = BytesIO()
-    banner.save(output, format="PNG")
+    banner.save(output, format='PNG')
     output.seek(0)
     return output
 
-@app.route("/", methods=["GET"])
-def handler():
-    name = request.args.get("name", "Vinh")
-    avatar_url = request.args.get("avatar", "https://i.imgur.com/5cKZrEq.png")
+@app.route("/")
+def join_banner():
+    name = request.args.get("name", "Tên người dùng")
+    avatar_url = request.args.get("avatar")
+
+    if not avatar_url:
+        return "Thiếu ?avatar=...", 400
 
     try:
-        with urllib.request.urlopen(avatar_url) as response:
-            avatar_bytes = response.read()
-    except:
-        return "Không tải được avatar", 400
+        response = requests.get(avatar_url)
+        avatar_img = Image.open(BytesIO(response.content))
+    except Exception as e:
+        return f"Lỗi tải avatar: {e}", 400
 
     lines = [
         "-- Member Join Group --",
@@ -71,9 +74,8 @@ def handler():
         "Vừa tham gia nhóm"
     ]
 
-    image_data = create_leave_group_banner(avatar_bytes, lines)
-    return send_file(image_data, mimetype="image/png")
+    image_io = create_leave_group_banner(avatar_img, lines, font_path="SVN-VT Redzone Classic.otf")
+    return send_file(image_io, mimetype="image/png")
 
-# Vercel cần biến này để biết hàm nào sẽ xử lý
-def handler(environ, start_response):
-    return app(environ, start_response)
+if __name__ == "__main__":
+    app.run(debug=True)

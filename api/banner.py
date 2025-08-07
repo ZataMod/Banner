@@ -6,8 +6,8 @@ import requests
 app = Flask(__name__)
 
 def create_leave_group_banner(avatar_img, lines, font_path):
-    banner_width = 1600
-    banner_height = 500
+    banner_width = 1230
+    banner_height = 740
     avatar_size = 300
     border_thickness = 8
 
@@ -31,7 +31,7 @@ def create_leave_group_banner(avatar_img, lines, font_path):
     banner.paste(bordered_avatar, (avatar_x, avatar_y), bordered_avatar)
 
     line_x = avatar_x + bordered_avatar.width + 40
-    draw.line([(line_x, 120), (line_x, banner_height - 60)], fill=(255, 255, 255, 80), width=3)
+    draw.line([(line_x, 150), (line_x, banner_height - 150)], fill=(255, 255, 255, 80), width=3)
 
     try:
         font = ImageFont.truetype(font_path, 70)

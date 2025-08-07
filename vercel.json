@@ -8,7 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/api/banner",
+      "src": "/(.*)",
       "dest": "api/banner.py"
     }
   ]

@@ -75,4 +75,5 @@ def handler():
     return send_file(image_data, mimetype="image/png")
 
 # Vercel cần biến này để biết hàm nào sẽ xử lý
-handler = app
+def handler(environ, start_response):
+    return app(environ, start_response)
